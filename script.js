@@ -85,38 +85,64 @@ addGoalForm.onsubmit = e => {
   }).then(() => newGoalInput.value = '');
 };
 
-// --- Calendar System ---
+// --- Calendar System with Navigation ---
+
+let calendarYear = 2024; // Start year
+let calendarMonth = 5;   // Start month (0-indexed, so 5 = June)
+
+const minYear = 2024, minMonth = 5; // June 2024
+const maxYear = 2026, maxMonth = 4; // May 2026
+
 function renderCalendar() {
-  // Set to May 2026 (month is 0-indexed)
-  const targetYear = 2026;
-  const targetMonth = 4;
-  
-  const firstDay = new Date(targetYear, targetMonth, 1);
-  const lastDay = new Date(targetYear, targetMonth + 1, 0);
+  const firstDay = new Date(calendarYear, calendarMonth, 1);
+  const lastDay = new Date(calendarYear, calendarMonth + 1, 0);
 
-  // Update selected date to first day if not in May 2026
-  if (!selectedDate.startsWith('2026-05')) {
-    selectedDate = `${targetYear}-05-01`;
-  }
-
-  let html = '<table class="calendar-table"><tr>';
-  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<th>${d}</th>`);
+  let html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button id="prevMonth" ${calendarYear === minYear && calendarMonth === minMonth ? 'disabled' : ''}>&lt;</button>
+      <span style="font-weight:bold;">${firstDay.toLocaleString('default', { month: 'long' })} ${calendarYear}</span>
+      <button id="nextMonth" ${calendarYear === maxYear && calendarMonth === maxMonth ? 'disabled' : ''}>&gt;</button>
+    </div>
+    <table class="calendar-table"><tr>
+  `;
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  days.forEach(d => html += `<th>${d}</th>`);
   html += '</tr><tr>';
 
   for(let i=0; i<firstDay.getDay(); i++) html += '<td></td>';
   for(let d=1; d<=lastDay.getDate(); d++) {
-    const dateStr = `${targetYear}-05-${d.toString().padStart(2,'0')}`;
-    const isToday = dateStr === new Date().toISOString().slice(0,10);
-    const isSelected = dateStr === selectedDate;
-    
-    html += `<td class="${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
-              data-date="${dateStr}">${d}</td>`;
-    
+    let dateStr = `${calendarYear}-${String(calendarMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    let isToday = dateStr === new Date().toISOString().slice(0,10);
+    let isSelected = dateStr === selectedDate;
+    html += `<td class="${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" data-date="${dateStr}">${d}</td>`;
     if((firstDay.getDay() + d) % 7 === 0) html += '</tr><tr>';
   }
   html += '</tr></table>';
   calendar.innerHTML = html;
 
+  // Navigation handlers
+  document.getElementById('prevMonth').onclick = () => {
+    if (calendarMonth === 0) {
+      calendarMonth = 11;
+      calendarYear--;
+    } else {
+      calendarMonth--;
+    }
+    renderCalendar();
+    renderProgress();
+  };
+  document.getElementById('nextMonth').onclick = () => {
+    if (calendarMonth === 11) {
+      calendarMonth = 0;
+      calendarYear++;
+    } else {
+      calendarMonth++;
+    }
+    renderCalendar();
+    renderProgress();
+  };
+
+  // Date selection
   document.querySelectorAll('#calendar td[data-date]').forEach(td => {
     td.onclick = () => {
       selectedDate = td.getAttribute('data-date');
@@ -125,6 +151,12 @@ function renderCalendar() {
     };
   });
 }
+
+// Set initial calendar to June 2024
+calendarYear = 2024;
+calendarMonth = 5;
+renderCalendar();
+
 
 // --- Progress Tracking ---
 function renderProgress() {

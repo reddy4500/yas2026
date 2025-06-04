@@ -3,16 +3,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Register</title>
+  <title>Register - My Study Tracker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Register</h2>
-  <form>
-    <input type="text" placeholder="Username"><br>
-    <input type="email" placeholder="Email"><br>
-    <input type="password" placeholder="Password"><br>
-    <button type="submit">Register</button>
-  </form>
+  <header>
+    <h1>Register</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="form.html">Add Goal</a>
+      <a href="userlist.html">Users</a>
+      <a href="system.html">System</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Create a new account</h2>
+      <form>
+        <input type="text" placeholder="Username" required>
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Password" required>
+        <input type="password" placeholder="Repeat Password" required>
+        <button type="submit">Register</button>
+      </form>
+      <p>Already registered? <a href="login.html">Login</a></p>
+    </section>
+  </main>
 </body>
 </html>

@@ -1,14 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Study Tracker</title>
+  <meta charset="UTF-8">
+  <title>My Study Tracker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Welcome to My Study Tracker</h1>
-  <a href="dashboard.html">Go to Dashboard</a>
+  <header>
+    <h1>My Study Tracker</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="form.html">Add Goal</a>
+      <a href="userlist.html">Users</a>
+      <a href="system.html">System</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+  <main>
+    <section id="daily-goals-section">
+      <h2>Today's Goals</h2>
+      <ul id="daily-goals-list"></ul>
+      <form id="add-goal-form">
+        <input type="text" id="new-goal-input" placeholder="Add a new goal..." required>
+        <button type="submit">Add Goal</button>
+      </form>
+    </section>
+    <section id="calendar-section">
+      <h2>Progress Calendar</h2>
+      <div id="calendar"></div>
+      <div id="progress-details" class="card">
+        <h3>Progress for <span id="selected-date"></span></h3>
+        <ul id="progress-list"></ul>
+        <form id="add-progress-form">
+          <input type="text" id="progress-input" placeholder="Add progress note..." required>
+          <button type="submit">Add Progress</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
+

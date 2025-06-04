@@ -1,1 +1,148 @@
-body { font-family: Arial, sans-serif; background: #eef; padding: 2rem; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+header {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  color: #2d6cdf;
+  font-weight: 700;
+}
+
+nav a {
+  margin: 0 1rem;
+  color: #2d6cdf;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+nav a:hover {
+  color: #174ea6;
+}
+
+main {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.07);
+  padding: 2rem 3rem;
+}
+
+section {
+  margin-bottom: 2.5rem;
+}
+
+#daily-goals-section, #calendar-section {
+  margin-bottom: 2rem;
+}
+
+#daily-goals-list, #progress-list {
+  list-style: none;
+  padding: 0;
+}
+
+#daily-goals-list li, #progress-list li {
+  background: #e3f0fc;
+  margin-bottom: 0.7rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#daily-goals-list button, #progress-list button {
+  background: #ffb3b3;
+  border: none;
+  border-radius: 50%;
+  width: 1.7em;
+  height: 1.7em;
+  font-size: 1.1em;
+  cursor: pointer;
+  margin-left: 1em;
+  color: #900;
+  transition: background 0.2s;
+}
+#daily-goals-list button:hover, #progress-list button:hover {
+  background: #ff7676;
+}
+
+form {
+  display: flex;
+  gap: 0.7em;
+  margin-top: 1em;
+}
+input[type="text"] {
+  flex: 1;
+  padding: 0.7em 1em;
+  border-radius: 8px;
+  border: 1px solid #b2d1f7;
+  font-size: 1em;
+  outline: none;
+}
+button[type="submit"] {
+  background: #2d6cdf;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7em 1.5em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button[type="submit"]:hover {
+  background: #174ea6;
+}
+
+.card {
+  background: #f5faff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(44, 62, 80, 0.04);
+  padding: 1.2em 1.5em;
+  margin-top: 1.5em;
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  background: #f0f7ff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.calendar-table th, .calendar-table td {
+  text-align: center;
+  padding: 0.7em 0;
+  font-size: 1em;
+}
+.calendar-table td {
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+.calendar-table td.today {
+  background: #2d6cdf;
+  color: #fff;
+  font-weight: 700;
+}
+.calendar-table td.selected {
+  background: #a1c4fd;
+  color: #174ea6;
+  font-weight: 700;
+}
+.calendar-table td:hover {
+  background: #b2d1f7;
+}

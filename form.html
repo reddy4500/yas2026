@@ -1,16 +1,44 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Form</title>
+  <title>Add New Goal - My Study Tracker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Add New Goal</h2>
-  <form>
-    <input type="text" placeholder="Enter your goal">
-    <button type="submit">Add Goal</button>
-  </form>
+  <header>
+    <h1>Add New Goal</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="form.html">Add Goal</a>
+      <a href="userlist.html">Users</a>
+      <a href="system.html">System</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Add a New Study Goal</h2>
+      <form id="add-goal-form-page">
+        <input type="text" id="goal-input-page" placeholder="Enter your new goal..." required>
+        <button type="submit">Add Goal</button>
+      </form>
+      <div id="goal-added-msg" style="margin-top:1em;color:green;"></div>
+    </section>
+  </main>
+  <script>
+    document.getElementById('add-goal-form-page').onsubmit = function(e) {
+      e.preventDefault();
+      let goals = JSON.parse(localStorage.getItem('goals')) || [];
+      let val = document.getElementById('goal-input-page').value.trim();
+      if(val) {
+        goals.push(val);
+        localStorage.setItem('goals', JSON.stringify(goals));
+        document.getElementById('goal-input-page').value = '';
+        document.getElementById('goal-added-msg').textContent = 'Goal added! Check the homepage.';
+      }
+    }
+  </script>
 </body>
 </html>

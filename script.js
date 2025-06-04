@@ -1,44 +1,91 @@
-// --- Goals ---
-let goals = JSON.parse(localStorage.getItem('goals')) || [];
+// --- Firebase SDK Setup ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  getDocs,
+  setDoc,
+  deleteDoc,
+  onSnapshot,
+  updateDoc,
+  arrayUnion,
+  arrayRemove
+} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD5p6GARxGNch-M_7RZBV9kLRC4RhAVNrg",
+  authDomain: "pg-2026.firebaseapp.com",
+  projectId: "pg-2026",
+  storageBucket: "pg-2026.firebasestorage.app",
+  messagingSenderId: "603600776265",
+  appId: "1:603600776265:web:be4cec2075c776ed13e398",
+  measurementId: "G-28QT4B4TRP"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// --- DOM Elements ---
 const dailyGoalsList = document.getElementById('daily-goals-list');
 const addGoalForm = document.getElementById('add-goal-form');
 const newGoalInput = document.getElementById('new-goal-input');
-
-function renderGoals() {
-  dailyGoalsList.innerHTML = '';
-  goals.forEach((goal, idx) => {
-    const li = document.createElement('li');
-    li.textContent = goal;
-    const del = document.createElement('button');
-    del.textContent = '✕';
-    del.onclick = () => {
-      goals.splice(idx, 1);
-      localStorage.setItem('goals', JSON.stringify(goals));
-      renderGoals();
-    };
-    li.appendChild(del);
-    dailyGoalsList.appendChild(li);
-  });
-}
-addGoalForm.onsubmit = e => {
-  e.preventDefault();
-  goals.push(newGoalInput.value.trim());
-  localStorage.setItem('goals', JSON.stringify(goals));
-  newGoalInput.value = '';
-  renderGoals();
-};
-renderGoals();
-
-// --- Calendar ---
 const calendar = document.getElementById('calendar');
 const selectedDateSpan = document.getElementById('selected-date');
 const progressList = document.getElementById('progress-list');
 const addProgressForm = document.getElementById('add-progress-form');
 const progressInput = document.getElementById('progress-input');
 
-let progressData = JSON.parse(localStorage.getItem('progressData')) || {};
 let selectedDate = new Date().toISOString().slice(0,10);
+let currentUser = null;
 
+// --- Authentication State ---
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+  renderGoals();
+  renderCalendar();
+  renderProgress();
+});
+
+// --- Goals ---
+async function renderGoals() {
+  if (!currentUser) return;
+  dailyGoalsList.innerHTML = '';
+  const goalsRef = collection(db, "users", currentUser.uid, "goals");
+  const snapshot = await getDocs(goalsRef);
+  snapshot.forEach(docSnap => {
+    const goal = docSnap.data().text;
+    const li = document.createElement('li');
+    li.textContent = goal;
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.onclick = async () => {
+      await deleteDoc(doc(db, "users", currentUser.uid, "goals", docSnap.id));
+      renderGoals();
+    };
+    li.appendChild(del);
+    dailyGoalsList.appendChild(li);
+  });
+}
+
+addGoalForm.onsubmit = async e => {
+  e.preventDefault();
+  if (!currentUser) return;
+  const text = newGoalInput.value.trim();
+  if (!text) return;
+  await addDoc(collection(db, "users", currentUser.uid, "goals"), { text });
+  newGoalInput.value = '';
+  renderGoals();
+};
+
+// --- Calendar ---
 function renderCalendar() {
   const today = new Date();
   const year = today.getFullYear();
@@ -71,33 +118,51 @@ function renderCalendar() {
   });
 }
 
-function renderProgress() {
+// --- Progress ---
+async function renderProgress() {
+  if (!currentUser) return;
   selectedDateSpan.textContent = selectedDate;
-  const notes = progressData[selectedDate] || [];
   progressList.innerHTML = '';
+  const progressRef = collection(db, "users", currentUser.uid, "progress");
+  const snapshot = await getDocs(progressRef);
+  let notes = [];
+  snapshot.forEach(docSnap => {
+    if (docSnap.id === selectedDate) {
+      notes = docSnap.data().notes || [];
+    }
+  });
   notes.forEach((note, idx) => {
     const li = document.createElement('li');
     li.textContent = note;
     const del = document.createElement('button');
     del.textContent = '✕';
-    del.onclick = () => {
+    del.onclick = async () => {
+      const docRef = doc(db, "users", currentUser.uid, "progress", selectedDate);
       notes.splice(idx, 1);
-      progressData[selectedDate] = notes;
-      localStorage.setItem('progressData', JSON.stringify(progressData));
+      await setDoc(docRef, { notes }, { merge: true });
       renderProgress();
     };
     li.appendChild(del);
     progressList.appendChild(li);
   });
 }
-addProgressForm.onsubmit = e => {
+
+addProgressForm.onsubmit = async e => {
   e.preventDefault();
-  if(!progressData[selectedDate]) progressData[selectedDate] = [];
-  progressData[selectedDate].push(progressInput.value.trim());
-  localStorage.setItem('progressData', JSON.stringify(progressData));
+  if (!currentUser) return;
+  const note = progressInput.value.trim();
+  if (!note) return;
+  const docRef = doc(db, "users", currentUser.uid, "progress", selectedDate);
+  // Get existing notes
+  let notes = [];
+  const docSnap = await getDocs(collection(db, "users", currentUser.uid, "progress"));
+  docSnap.forEach(snap => {
+    if (snap.id === selectedDate) {
+      notes = snap.data().notes || [];
+    }
+  });
+  notes.push(note);
+  await setDoc(docRef, { notes }, { merge: true });
   progressInput.value = '';
   renderProgress();
 };
-
-renderCalendar();
-renderProgress();

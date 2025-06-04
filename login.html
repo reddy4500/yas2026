@@ -1,58 +1,48 @@
-
+<!-- Updated login.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Register</title>
+    <title>Login</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main>
-        <h2>Create Account</h2>
-        <form id="registerForm">
+        <h2>Login</h2>
+        <form id="loginForm">
             <div class="card">
                 <label>Phone Number:</label>
                 <input type="tel" id="phone" name="phone" 
                        pattern="[6-9][0-9]{9}" 
-                       placeholder="Enter 10-digit phone" required>
+                       placeholder="Enter registered phone" required>
                 
                 <label>Password:</label>
-                <input type="password" id="password" 
-                       minlength="6" required>
+                <input type="password" id="password" required>
                 
-                <button type="submit">Register</button>
+                <button type="submit">Login</button>
             </div>
         </form>
-        <p>Already registered? <a href="login.html">Login here</a></p>
+        <p>New here? <a href="register.html">Register now</a></p>
     </main>
 
     <script>
-        document.getElementById('registerForm').onsubmit = function(e) {
+        document.getElementById('loginForm').onsubmit = function(e) {
             e.preventDefault();
             
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
             
-            // Validate phone format
-            const phoneRegex = /^[6-9]\d{9}$/;
-            if (!phoneRegex.test(phone)) {
-                alert('Invalid phone number format');
-                return;
-            }
-            
-            // Check existing users
+            // Get registered users
             const users = JSON.parse(localStorage.getItem('users') || '[]');
-            if (users.some(u => u.phone === phone)) {
-                alert('User already exists!');
-                return;
+            const user = users.find(u => u.phone === phone && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('loggedInUser', phone);
+                window.location.href = 'index.html';
+            } else {
+                alert('Invalid credentials!');
             }
-            
-            // Store new user
-            users.push({ phone, password });
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            alert('Registration successful!');
-            window.location.href = 'login.html';
         };
     </script>
 </body>
 </html>
+

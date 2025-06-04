@@ -1,32 +1,58 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Login - PG 2026</title>
-  <link rel="stylesheet" href="style.css">
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Login</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="form.html">Add Goal</a>
-      <a href="userlist.html">Users</a>
-      <a href="system.html">System</a>
-      <a href="register.html">Register</a>
-    </nav>
-  </header>
-  <main>
-    <section>
-      <h2>Login to your account</h2>
-      <form>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-      </form>
-      <p>New here? <a href="register.html">Register</a></p>
-    </section>
-  </main>
+    <main>
+        <h2>Create Account</h2>
+        <form id="registerForm">
+            <div class="card">
+                <label>Phone Number:</label>
+                <input type="tel" id="phone" name="phone" 
+                       pattern="[6-9][0-9]{9}" 
+                       placeholder="Enter 10-digit phone" required>
+                
+                <label>Password:</label>
+                <input type="password" id="password" 
+                       minlength="6" required>
+                
+                <button type="submit">Register</button>
+            </div>
+        </form>
+        <p>Already registered? <a href="login.html">Login here</a></p>
+    </main>
+
+    <script>
+        document.getElementById('registerForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            
+            // Validate phone format
+            const phoneRegex = /^[6-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Invalid phone number format');
+                return;
+            }
+            
+            // Check existing users
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(u => u.phone === phone)) {
+                alert('User already exists!');
+                return;
+            }
+            
+            // Store new user
+            users.push({ phone, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            alert('Registration successful!');
+            window.location.href = 'login.html';
+        };
+    </script>
 </body>
 </html>

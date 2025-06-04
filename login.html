@@ -1,9 +1,25 @@
-<!-- Updated login.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script>
+      // Your Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyD5p6GARxGNch-M_7RZBV9kLRC4RhAVNrg",
+        authDomain: "pg-2026.firebaseapp.com",
+        projectId: "pg-2026",
+        storageBucket: "pg-2026.firebasestorage.app",
+        messagingSenderId: "603600776265",
+        appId: "1:603600776265:web:be4cec2075c776ed13e398",
+        measurementId: "G-28QT4B4TRP"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+    </script>
 </head>
 <body>
     <main>
@@ -11,13 +27,13 @@
         <form id="loginForm">
             <div class="card">
                 <label>Phone Number:</label>
-                <input type="tel" id="phone" name="phone" 
-                       pattern="[6-9][0-9]{9}" 
+                <input type="tel" id="phone" name="phone"
+                       pattern="[6-9][0-9]{9}"
                        placeholder="Enter registered phone" required>
-                
+
                 <label>Password:</label>
                 <input type="password" id="password" required>
-                
+
                 <button type="submit">Login</button>
             </div>
         </form>
@@ -25,23 +41,34 @@
     </main>
 
     <script>
-        document.getElementById('loginForm').onsubmit = function(e) {
-            e.preventDefault();
-            
-            const phone = document.getElementById('phone').value;
-            const password = document.getElementById('password').value;
-            
-            // Get registered users
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const user = users.find(u => u.phone === phone && u.password === password);
-            
-            if (user) {
-                localStorage.setItem('loggedInUser', phone);
-                window.location.href = 'index.html';
+      // Helper: convert phone number to pseudo-email
+      function phoneToEmail(phone) {
+        // Use a fixed domain for all phone logins
+        return `${phone}@phone.pg2026.com`;
+      }
+
+      document.getElementById('loginForm').onsubmit = function(e) {
+        e.preventDefault();
+
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+
+        const email = phoneToEmail(phone);
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            window.location.href = 'index.html';
+          })
+          .catch(error => {
+            if (error.code === 'auth/user-not-found') {
+              alert('No user found with this phone number.');
+            } else if (error.code === 'auth/wrong-password') {
+              alert('Incorrect password.');
             } else {
-                alert('Invalid credentials!');
+              alert(error.message);
             }
-        };
+          });
+      };
     </script>
 </body>
 </html>

@@ -64,6 +64,7 @@ section {
   justify-content: space-between;
   align-items: center;
 }
+
 #daily-goals-list button, #progress-list button {
   background: #ffb3b3;
   border: none;
@@ -85,6 +86,7 @@ form {
   gap: 0.7em;
   margin-top: 1em;
 }
+
 input[type="text"] {
   flex: 1;
   padding: 0.7em 1em;
@@ -93,6 +95,7 @@ input[type="text"] {
   font-size: 1em;
   outline: none;
 }
+
 button[type="submit"] {
   background: #2d6cdf;
   color: #fff;
@@ -115,6 +118,19 @@ button[type="submit"]:hover {
   margin-top: 1.5em;
 }
 
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7em;
+}
+
+.calendar-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #2d6cdf;
+}
+
 .calendar-table {
   width: 100%;
   border-collapse: collapse;
@@ -123,26 +139,31 @@ button[type="submit"]:hover {
   border-radius: 10px;
   overflow: hidden;
 }
+
 .calendar-table th, .calendar-table td {
   text-align: center;
   padding: 0.7em 0;
   font-size: 1em;
 }
+
 .calendar-table td {
   cursor: pointer;
   border-radius: 50%;
   transition: background 0.2s, color 0.2s;
 }
+
 .calendar-table td.today {
   background: #2d6cdf;
   color: #fff;
   font-weight: 700;
 }
+
 .calendar-table td.selected {
   background: #a1c4fd;
   color: #174ea6;
   font-weight: 700;
 }
+
 .calendar-table td:hover {
   background: #b2d1f7;
 }

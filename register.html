@@ -3,23 +3,6 @@
 <head>
     <title>Register</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-    <script>
-      // Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyD5p6GARxGNch-M_7RZBV9kLRC4RhAVNrg",
-        authDomain: "pg-2026.firebaseapp.com",
-        projectId: "pg-2026",
-        storageBucket: "pg-2026.firebasestorage.app",
-        messagingSenderId: "603600776265",
-        appId: "1:603600776265:web:be4cec2075c776ed13e398",
-        measurementId: "G-28QT4B4TRP"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-    </script>
 </head>
 <body>
     <main>
@@ -40,36 +23,26 @@
         <p>Already registered? <a href="login.html">Login</a></p>
     </main>
     <script>
-      // Helper: convert phone number to pseudo-email
-      function phoneToEmail(phone) {
-        return `${phone}@phone.pg2026.com`;
-      }
-
-      document.getElementById('registerForm').onsubmit = function(e) {
-        e.preventDefault();
-        const phone = document.getElementById('phone').value.trim();
-        const password = document.getElementById('password').value;
-        const phoneRegex = /^[7-9][0-9]{9}$/;
-        if (!phoneRegex.test(phone)) {
-          alert('Invalid phone number format. Must start with 7, 8, or 9 and be 10 digits.');
-          return;
-        }
-        const email = phoneToEmail(phone);
-        auth.createUserWithEmailAndPassword(email, password)
-          .then(() => {
+        document.getElementById('registerForm').onsubmit = function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const phoneRegex = /^[7-9][0-9]{9}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Invalid phone number format. Must start with 7, 8, or 9 and be 10 digits.');
+                return;
+            }
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(u => u.phone === phone)) {
+                alert('This phone number is already registered.');
+                return;
+            }
+            users.push({ phone, password });
+            localStorage.setItem('users', JSON.stringify(users));
             alert('Registration successful! Please login.');
             window.location.href = 'login.html';
-          })
-          .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-              alert('This phone number is already registered.');
-            } else if (error.code === 'auth/weak-password') {
-              alert('Password should be at least 6 characters.');
-            } else {
-              alert(error.message);
-            }
-          });
-      };
+        };
     </script>
 </body>
 </html>
+
